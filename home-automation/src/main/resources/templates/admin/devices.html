@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Devices')}"></head>
+<body>
+<header th:replace="~{fragments :: adminNav('devices')}"></header>
+
+<div class="container">
+    <h1>Device Compatibility</h1>
+    <p class="sub">Approve or reject devices added by homeowners.</p>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="card table-wrap">
+        <p class="empty" th:if="${devices.isEmpty()}">No devices have been added yet.</p>
+        <table th:unless="${devices.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Device</th>
+                <th>Type</th>
+                <th>Protocol</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="d : ${devices}">
+                <td>
+                    <span th:text="${d.name}">Name</span><br>
+                    <small th:text="${d.room}" style="color:#6b7785;">Room</small>
+                </td>
+                <td th:text="${d.type}">Type</td>
+                <td th:text="${d.protocol}">Wi-Fi</td>
+                <td th:text="${d.owner != null} ? ${d.owner.name} : '-'">Owner</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${d.status == 'APPROVED'} ? 'green' : (${d.status == 'REJECTED'} ? 'red' : 'amber')"
+                          th:text="${d.status == 'APPROVED'} ? 'Approved' : (${d.status == 'REJECTED'} ? 'Rejected' : 'Pending')">Status</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <form th:if="${d.status != 'APPROVED'}" th:action="@{/admin/devices/{id}/approve(id=${d.id})}" method="post">
+                            <button type="submit" class="btn small primary">Approve</button>
+                        </form>
+                        <form th:if="${d.status != 'REJECTED'}" th:action="@{/admin/devices/{id}/reject(id=${d.id})}" method="post">
+                            <button type="submit" class="btn small">Reject</button>
+                        </form>
+                        <form th:action="@{/admin/devices/{id}/delete(id=${d.id})}" method="post"
+                              onsubmit="return confirm('Delete this device?');">
+                            <button type="submit" class="btn small danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

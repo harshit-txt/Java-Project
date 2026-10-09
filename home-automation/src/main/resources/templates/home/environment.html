@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Environment')}"></head>
+<body>
+<header th:replace="~{fragments :: homeNav('environment')}"></header>
+
+<div class="container">
+    <h1 th:text="${user.homeName}">My Home</h1>
+    <p class="sub">Live status of your home. Last updated <span th:text="${env.updatedText}">now</span>.</p>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="grid">
+        <div class="card reading">
+            <div class="number"><span th:text="${#numbers.formatDecimal(env.temperature, 1, 1)}">26.0</span>&deg;C</div>
+            <div class="label">Temperature</div>
+        </div>
+        <div class="card reading">
+            <div class="number"><span th:text="${#numbers.formatDecimal(env.humidity, 1, 1)}">55.0</span>%</div>
+            <div class="label">Humidity</div>
+        </div>
+        <div class="card reading">
+            <div class="number">
+                <span class="badge" th:classappend="${env.securityStatus == 'Secure'} ? 'green' : 'red'"
+                      th:text="${env.securityStatus}">Secure</span>
+            </div>
+            <div class="label">Security status</div>
+        </div>
+        <div class="card reading">
+            <div class="number" th:text="${onCount}">0</div>
+            <div class="label">Devices running</div>
+        </div>
+    </div>
+
+    <div class="two-col" style="margin-top:16px;">
+        <div class="card">
+            <h2>Update readings</h2>
+            <form th:action="@{/home/environment}" method="post">
+                <div class="form-grid">
+                    <div>
+                        <label for="temperature">Temperature (&deg;C)</label>
+                        <input type="number" id="temperature" name="temperature" step="0.1" min="-20" max="60"
+                               th:value="${env.temperature}" required>
+                    </div>
+                    <div>
+                        <label for="humidity">Humidity (%)</label>
+                        <input type="number" id="humidity" name="humidity" step="0.1" min="0" max="100"
+                               th:value="${env.humidity}" required>
+                    </div>
+                    <div>
+                        <label for="securityStatus">Security</label>
+                        <select id="securityStatus" name="securityStatus">
+                            <option value="Secure" th:selected="${env.securityStatus == 'Secure'}">Secure</option>
+                            <option value="Alert" th:selected="${env.securityStatus == 'Alert'}">Alert</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="actions" style="margin-top:14px;">
+                    <button type="submit" class="btn primary">Save readings</button>
+                </div>
+            </form>
+            <form th:action="@{/home/environment/simulate}" method="post" style="margin-top:10px;">
+                <button type="submit" class="btn">Simulate sensor reading</button>
+            </form>
+            <p class="note">Saving new readings also runs your automation rules.</p>
+        </div>
+
+        <div class="card">
+            <h2>Your devices</h2>
+            <p class="empty" th:if="${devices.isEmpty()}">No devices yet. <a th:href="@{/home/devices}">Add one</a>.</p>
+            <ul class="list" th:unless="${devices.isEmpty()}">
+                <li th:each="d : ${devices}">
+                    <span th:text="${d.name}">Device</span>
+                    <span style="float:right;">
+                        <span class="badge green" th:if="${d.approved and d.power}" th:text="${d.stateText}">On</span>
+                        <span class="badge" th:if="${d.approved and !d.power}" th:text="${d.stateText}">Off</span>
+                        <span class="badge amber" th:if="${d.status == 'PENDING'}">Pending</span>
+                        <span class="badge red" th:if="${d.status == 'REJECTED'}">Rejected</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

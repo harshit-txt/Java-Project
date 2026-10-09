@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Settings')}"></head>
+<body>
+<header th:replace="~{fragments :: adminNav('settings')}"></header>
+
+<div class="container" style="max-width:520px;">
+    <h1>System Settings</h1>
+    <p class="sub">These settings apply to the whole platform.</p>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <form class="card" th:action="@{/admin/settings}" method="post">
+        <div class="field">
+            <label for="siteName">Platform name</label>
+            <input type="text" id="siteName" name="siteName" th:value="${siteNameValue}" required>
+        </div>
+        <div class="field">
+            <label for="maxDevices">Max devices per homeowner</label>
+            <input type="number" id="maxDevices" name="maxDevices" min="1" max="100" th:value="${maxDevicesValue}" required>
+        </div>
+        <div class="field">
+            <label class="check">
+                <input type="checkbox" name="allowRegistration" th:checked="${registrationValue}">
+                Let new homeowners register themselves
+            </label>
+        </div>
+        <button type="submit" class="btn primary">Save settings</button>
+    </form>
+</div>
+</body>
+</html>

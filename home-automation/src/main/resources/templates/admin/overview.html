@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin Overview')}"></head>
+<body>
+<header th:replace="~{fragments :: adminNav('overview')}"></header>
+
+<div class="container">
+    <h1>Overview</h1>
+    <p class="sub">System monitoring at a glance.</p>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="grid">
+        <div class="card stat">
+            <div class="number" th:text="${userCount}">0</div>
+            <div class="label">Users (<span th:text="${homeownerCount}">0</span> homeowners)</div>
+        </div>
+        <div class="card stat">
+            <div class="number" th:text="${deviceCount}">0</div>
+            <div class="label">Devices</div>
+        </div>
+        <div class="card stat">
+            <div class="number" th:text="${pendingCount}">0</div>
+            <div class="label">Waiting for approval</div>
+        </div>
+        <div class="card stat">
+            <div class="number" th:text="${ruleCount}">0</div>
+            <div class="label">Automation rules</div>
+        </div>
+    </div>
+
+    <div class="two-col" style="margin-top:16px;">
+        <div class="card">
+            <h2>Alerts</h2>
+            <p class="empty" th:if="${alerts.isEmpty()}">No alerts. Everything looks fine.</p>
+            <ul class="list" th:unless="${alerts.isEmpty()}">
+                <li th:each="a : ${alerts}" th:text="${a}">Alert text</li>
+            </ul>
+            <div th:if="${pendingCount > 0}" style="margin-top:12px;">
+                <a class="btn small" th:href="@{/admin/devices}">Review devices</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>System performance</h2>
+            <ul class="list">
+                <li>Running for <strong th:text="${uptimeMinutes}">0</strong> minutes</li>
+                <li>Memory used: <strong th:text="${usedMb}">0</strong> MB of <span th:text="${maxMb}">0</span> MB</li>
+                <li>Database: <span class="badge green">Connected</span></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

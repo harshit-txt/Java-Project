@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('User')}"></head>
+<body>
+<header th:replace="~{fragments :: adminNav('users')}"></header>
+
+<div class="container" style="max-width:520px;">
+    <h1 th:text="${formUser.id == null} ? 'Add user' : 'Edit user'">User</h1>
+    <p class="sub">Fill in the details and save.</p>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <form class="card" th:action="@{/admin/users/save}" method="post">
+        <input type="hidden" name="id" th:value="${formUser.id}">
+
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" th:value="${formUser.name}" required>
+        </div>
+        <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" th:value="${formUser.email}" required>
+        </div>
+        <div class="field">
+            <label for="role">Role</label>
+            <select id="role" name="role">
+                <option value="HOMEOWNER" th:selected="${formUser.role == 'HOMEOWNER'}">Homeowner</option>
+                <option value="ADMIN" th:selected="${formUser.role == 'ADMIN'}">Admin</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="password"
+                   th:text="${formUser.id == null} ? 'Password (min 6 characters)' : 'New password (leave empty to keep the current one)'">Password</label>
+            <input type="password" id="password" name="password">
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn primary">Save user</button>
+            <a class="btn" th:href="@{/admin/users}">Cancel</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Users')}"></head>
+<body>
+<header th:replace="~{fragments :: adminNav('users')}"></header>
+
+<div class="container">
+    <div class="actions" style="justify-content:space-between;">
+        <div>
+            <h1>User Management</h1>
+            <p class="sub">Create, edit and delete user accounts.</p>
+        </div>
+        <a class="btn primary" th:href="@{/admin/users/new}">Add user</a>
+    </div>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="card table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.name}">Name</td>
+                <td th:text="${u.email}">email</td>
+                <td>
+                    <span class="badge" th:classappend="${u.role == 'ADMIN'} ? 'amber' : 'green'"
+                          th:text="${u.role == 'ADMIN'} ? 'Admin' : 'Homeowner'">Role</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <a class="btn small" th:href="@{/admin/users/{id}/edit(id=${u.id})}">Edit</a>
+                        <form th:if="${u.id != session.userId}"
+                              th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post"
+                              onsubmit="return confirm('Delete this user and all their devices and rules?');">
+                            <button type="submit" class="btn small danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

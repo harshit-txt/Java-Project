@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Profile')}"></head>
+<body>
+<header th:replace="~{fragments :: homeNav('profile')}"></header>
+
+<div class="container" style="max-width:520px;">
+    <h1>Profile</h1>
+    <p class="sub">Update your personal details and preferences.</p>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <form class="card" th:action="@{/home/profile}" method="post">
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" th:value="${user.name}" required>
+        </div>
+        <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" th:value="${user.email}" required>
+        </div>
+        <div class="field">
+            <label for="homeName">Home name</label>
+            <input type="text" id="homeName" name="homeName" th:value="${user.homeName}" required>
+        </div>
+        <div class="field">
+            <label for="newPassword">New password (leave empty to keep the current one)</label>
+            <input type="password" id="newPassword" name="newPassword">
+        </div>
+        <button type="submit" class="btn primary">Save profile</button>
+    </form>
+</div>
+</body>
+</html>

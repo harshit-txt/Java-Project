@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Register')}"></head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <h1>Create account</h1>
+        <p class="sub">Sign up as a homeowner.</p>
+
+        <div th:replace="~{fragments :: flash}"></div>
+
+        <form th:if="${registrationOpen}" th:action="@{/register}" method="post">
+            <div class="field">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" th:value="${name}" required>
+            </div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" th:value="${email}" required>
+            </div>
+            <div class="field">
+                <label for="password">Password (min 6 characters)</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn primary">Sign up</button>
+        </form>
+
+        <p class="note" th:unless="${registrationOpen}">New accounts are turned off by the admin right now.</p>
+
+        <div class="switch">Already have an account? <a th:href="@{/login}">Log in</a></div>
+    </div>
+</div>
+</body>
+</html>

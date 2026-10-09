@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' - ' + ${siteName}">Page</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Navigation bar for the admin -->
+<header th:fragment="adminNav(active)" class="topbar">
+    <div class="brand" th:text="${siteName}">Smart Home</div>
+    <nav>
+        <a th:href="@{/admin}" th:classappend="${active == 'overview'} ? 'active'">Overview</a>
+        <a th:href="@{/admin/users}" th:classappend="${active == 'users'} ? 'active'">Users</a>
+        <a th:href="@{/admin/devices}" th:classappend="${active == 'devices'} ? 'active'">Devices</a>
+        <a th:href="@{/admin/settings}" th:classappend="${active == 'settings'} ? 'active'">Settings</a>
+    </nav>
+    <div class="who">
+        <span th:text="${session.userName}">Admin</span>
+        <a th:href="@{/logout}">Log out</a>
+    </div>
+</header>
+
+<!-- Navigation bar for the homeowner -->
+<header th:fragment="homeNav(active)" class="topbar">
+    <div class="brand" th:text="${siteName}">Smart Home</div>
+    <nav>
+        <a th:href="@{/home}" th:classappend="${active == 'environment'} ? 'active'">Environment</a>
+        <a th:href="@{/home/devices}" th:classappend="${active == 'devices'} ? 'active'">Devices</a>
+        <a th:href="@{/home/rules}" th:classappend="${active == 'rules'} ? 'active'">Automation</a>
+        <a th:href="@{/home/profile}" th:classappend="${active == 'profile'} ? 'active'">Profile</a>
+    </nav>
+    <div class="who">
+        <span th:text="${session.userName}">User</span>
+        <a th:href="@{/logout}">Log out</a>
+    </div>
+</header>
+
+<!-- Success / error messages -->
+<div th:fragment="flash">
+    <div class="alert ok" th:if="${msg != null}" th:text="${msg}"></div>
+    <div class="alert err" th:if="${error != null}" th:text="${error}"></div>
+    <div class="alert info" th:if="${ruleMsgs != null and !ruleMsgs.isEmpty()}">
+        <div th:each="m : ${ruleMsgs}" th:text="${m}"></div>
+    </div>
+</div>
+
+</body>
+</html>

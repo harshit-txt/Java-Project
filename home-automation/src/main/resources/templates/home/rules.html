@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Automation')}"></head>
+<body>
+<header th:replace="~{fragments :: homeNav('rules')}"></header>
+
+<div class="container">
+    <h1>Automation Rules</h1>
+    <p class="sub">Let your devices react when the home environment changes.</p>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="card">
+        <h2>New rule</h2>
+        <p class="empty" th:if="${devices.isEmpty()}">You need at least one approved device to create a rule.</p>
+        <form th:unless="${devices.isEmpty()}" th:action="@{/home/rules/add}" method="post">
+            <div class="form-grid">
+                <div>
+                    <label for="name">Rule name</label>
+                    <input type="text" id="name" name="name" placeholder="e.g. Cool the bedroom" required>
+                </div>
+                <div>
+                    <label for="conditionType">When</label>
+                    <select id="conditionType" name="conditionType">
+                        <option value="TEMP_ABOVE">Temperature is above (&deg;C)</option>
+                        <option value="TEMP_BELOW">Temperature is below (&deg;C)</option>
+                        <option value="HUMIDITY_ABOVE">Humidity is above (%)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="conditionValue">Value</label>
+                    <input type="number" id="conditionValue" name="conditionValue" step="0.1" required>
+                </div>
+                <div>
+                    <label for="action">Then turn</label>
+                    <select id="action" name="action">
+                        <option value="ON">ON</option>
+                        <option value="OFF">OFF</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="deviceId">Device</label>
+                    <select id="deviceId" name="deviceId">
+                        <option th:each="d : ${devices}" th:value="${d.id}"
+                                th:text="${d.name} + ' (' + ${d.room} + ')'">Device</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-top:14px;">
+                <button type="submit" class="btn primary">Create rule</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card table-wrap">
+        <h2>Your rules</h2>
+        <p class="empty" th:if="${rules.isEmpty()}">No rules yet.</p>
+        <table th:unless="${rules.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>What it does</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${rules}">
+                <td th:text="${r.name}">Rule</td>
+                <td th:text="${r.description}">Description</td>
+                <td>
+                    <span class="badge" th:classappend="${r.enabled} ? 'green'"
+                          th:text="${r.enabled} ? 'Enabled' : 'Disabled'">Enabled</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <form th:action="@{/home/rules/{id}/toggle(id=${r.id})}" method="post">
+                            <button type="submit" class="btn small" th:text="${r.enabled} ? 'Disable' : 'Enable'">Disable</button>
+                        </form>
+                        <form th:action="@{/home/rules/{id}/delete(id=${r.id})}" method="post"
+                              onsubmit="return confirm('Delete this rule?');">
+                            <button type="submit" class="btn small danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

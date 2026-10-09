@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Devices')}"></head>
+<body>
+<header th:replace="~{fragments :: homeNav('devices')}"></header>
+
+<div class="container">
+    <h1>Device Control</h1>
+    <p class="sub">Turn your devices on or off and change their settings.</p>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <details class="card">
+        <summary>Add a new device</summary>
+        <form th:action="@{/home/devices/add}" method="post">
+            <div class="form-grid">
+                <div>
+                    <label for="name">Device name</label>
+                    <input type="text" id="name" name="name" placeholder="e.g. Study Lamp" required>
+                </div>
+                <div>
+                    <label for="type">Type</label>
+                    <select id="type" name="type">
+                        <option th:each="t : ${types}" th:value="${t}" th:text="${t}">Light</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="room">Room</label>
+                    <input type="text" id="room" name="room" placeholder="e.g. Study" required>
+                </div>
+                <div>
+                    <label for="protocol">Connection</label>
+                    <select id="protocol" name="protocol">
+                        <option th:each="p : ${protocols}" th:value="${p}" th:text="${p}">Wi-Fi</option>
+                    </select>
+                </div>
+            </div>
+            <p class="note">You can add up to <span th:text="${maxDevices}">10</span> devices. The admin must approve a new device before you can control it.</p>
+            <button type="submit" class="btn primary">Add device</button>
+        </form>
+    </details>
+
+    <p class="empty" th:if="${devices.isEmpty()}">You have no devices yet. Add your first one above.</p>
+
+    <div class="grid">
+        <div class="device-card" th:each="d : ${devices}">
+            <div class="device-top">
+                <div>
+                    <h3 th:text="${d.name}">Device</h3>
+                    <div class="meta"><span th:text="${d.type}">Light</span>, <span th:text="${d.room}">Room</span>, <span th:text="${d.protocol}">Wi-Fi</span></div>
+                </div>
+                <span class="badge green" th:if="${d.approved and d.power}" th:text="${d.stateText}">On</span>
+                <span class="badge" th:if="${d.approved and !d.power}" th:text="${d.stateText}">Off</span>
+                <span class="badge amber" th:if="${d.status == 'PENDING'}">Pending</span>
+                <span class="badge red" th:if="${d.status == 'REJECTED'}">Rejected</span>
+            </div>
+
+            <p class="note" th:if="${d.status == 'PENDING'}">Waiting for admin approval.</p>
+            <p class="note" th:if="${d.status == 'REJECTED'}">The admin marked this device as not compatible.</p>
+
+            <div th:if="${d.approved}">
+                <form th:action="@{/home/devices/{id}/toggle(id=${d.id})}" method="post">
+                    <button type="submit" class="btn primary small" th:text="${d.actionText}">Turn on</button>
+                </form>
+
+                <form class="level-form" th:if="${d.adjustable}"
+                      th:action="@{/home/devices/{id}/level(id=${d.id})}" method="post">
+                    <label th:text="${d.settingLabel}">Brightness</label>
+                    <div class="row">
+                        <input type="range" name="level" th:attr="min=${d.min},max=${d.max}" th:value="${d.level}"
+                               oninput="this.nextElementSibling.value = this.value">
+                        <output th:text="${d.level}">50</output>
+                        <button type="submit" class="btn small">Set</button>
+                    </div>
+                </form>
+            </div>
+
+            <form th:action="@{/home/devices/{id}/delete(id=${d.id})}" method="post"
+                  onsubmit="return confirm('Remove this device?');" style="margin-top:10px;">
+                <button type="submit" class="btn small danger">Remove</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
